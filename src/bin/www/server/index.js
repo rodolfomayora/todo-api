@@ -1,12 +1,14 @@
 const http = require('http');
 const app = require('../../../app');
+const config = require('../../../config');
+const logger = require('../../../utils/logger');
 
 const server = http.createServer(app);
 
 const initServer = () => {
-  const port = 3000;
+  const port = config.PORT;
   const initialCallback = () => {
-    console.log(`API server listening at port: ${port}`);
+    logger.info(`API server listening at port: ${port}`);
   }
   const serverRef = server.listen(port, initialCallback);
   return serverRef;
@@ -14,7 +16,7 @@ const initServer = () => {
 
 const stopServer = (args) => {
   server.close(args);
-  console.log('API server closed');
+  logger.info('API server closed');
 }
 
 module.exports = { initServer, stopServer };
