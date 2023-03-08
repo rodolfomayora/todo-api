@@ -1,4 +1,4 @@
-const config = require('./config');
+const config = require('../config');
 
 const info = (...props) => {
   if (config.ENV !== 'testing') console.log(...props);
