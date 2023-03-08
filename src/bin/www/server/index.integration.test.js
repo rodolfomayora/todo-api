@@ -11,7 +11,7 @@ afterEach((done) => {
   server.stopServer(done);
 });
 
-describe('server', () => {
+describe('API server', () => {
   test('When recieves GET: /api/v1 request, then responses with welcome message', async () => {
     const { request } = setup();
     const response = await request.get('/api/v1');
