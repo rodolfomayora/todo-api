@@ -1,0 +1,18 @@
+{
+  "name": "todo-api",
+  "version": "0.1.0",
+  "main": "./src/bin/www/index.js",
+  "repository": "https://github.com/rodolfomayora/todo-api.git",
+  "author": "Rodolfo Mayora <rodolfomayora96@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV='production' node ./src/bin/www/index.js",
+    "dev": "NODE_ENV='development' nodemon ./src/bin/www/index.js",
+    "test": "NODE_ENV='testing' echo 'testing'"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.21"
+  }
+}
