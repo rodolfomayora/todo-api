@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const server = require('../server');
+const server = require('.');
 
 const setup = () => {
   const serverRef = server.initServer();

@@ -1,12 +1,12 @@
 const http = require('http');
-const app = require('../../../app');
-const config = require('../../../config');
-const logger = require('../../../utils/logger');
+const app = require('../../app');
+const env = require('../env');
+const logger = require('../../util/logger');
 
 const server = http.createServer(app);
 
 const initServer = () => {
-  const port = config.PORT;
+  const port = env.PORT;
   const initialCallback = () => {
     logger.info(`API server listening at port: ${port}`);
   }

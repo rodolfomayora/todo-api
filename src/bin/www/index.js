@@ -1,1 +1,1 @@
-require('./server').initServer();
+require('../../config/server').initServer();
