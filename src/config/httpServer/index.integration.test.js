@@ -1,17 +1,17 @@
 const supertest = require('supertest');
-const server = require('.');
+const httpServer = require('.');
 
 const setup = () => {
-  const serverRef = server.initServer();
+  const serverRef = httpServer.initServer();
   const request = supertest(serverRef);
   return { request };
 }
 
 afterEach((done) => {
-  server.stopServer(done);
+  httpServer.stopServer(done);
 });
 
-describe('API server', () => {
+describe('API http server', () => {
   test('When recieves GET: /api/v1 request, then responses with welcome message', async () => {
     const { request } = setup();
     const response = await request.get('/api/v1');
