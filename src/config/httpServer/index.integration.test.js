@@ -2,7 +2,7 @@ const supertest = require('supertest');
 const httpServer = require('.');
 
 const setup = () => {
-  const serverRef = httpServer.initServer();
+  const serverRef = httpServer.startServer();
   const request = supertest(serverRef);
   return { request };
 }

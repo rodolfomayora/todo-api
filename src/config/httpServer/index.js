@@ -5,12 +5,12 @@ const logger = require('../../util/logger');
 
 const server = http.createServer(app);
 
-const initServer = () => {
+const startServer = () => {
   const port = env.PORT;
-  const initialCallback = () => {
-    logger.info(`API http server listening at port: ${port}`);
+  const handleListen = () => {
+    return logger.info(`API http server listening at port: ${port}`);
   }
-  const serverRef = server.listen(port, initialCallback);
+  const serverRef = server.listen(port, handleListen);
   return serverRef;
 }
 
@@ -19,4 +19,4 @@ const stopServer = (args) => {
   logger.info('API http server closed');
 }
 
-module.exports = { initServer, stopServer };
+module.exports = { startServer, stopServer };
