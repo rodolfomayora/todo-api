@@ -1,11 +1,11 @@
-const config = require('../config');
+const env = require('../config/env');
 
 const info = (...props) => {
-  if (config.ENV !== 'testing') console.log(...props);
+  if (!env.IS_TESTING) console.log(...props);
 }
 
 const error = (...props) => {
-  if (config.ENV !== 'testing') console.error(...props);
+  if (!env.IS_TESTING) console.error(...props);
 }
 
 module.exports = { info, error };
