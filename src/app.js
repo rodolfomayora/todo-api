@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const apiMiddeware = require('./middleware/api');
 const errorMiddleware = require('./middleware/error');
 
 const app = express();
 
-app.use(express.json()); // to allow JSON entries
+app.use(cors());
+app.use(express.json());
 app.use(apiMiddeware.requestLogger);
 app.get('/api/v1', (reques, response) => {
   return response.status(200).json({ message: 'TODO RESTful API'});
