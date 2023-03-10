@@ -21,7 +21,7 @@ describe('API http server', () => {
     expect(body).toEqual({ message: 'TODO RESTful API' });
   });
 
-  test('When recieves request to unknown route, then responses with error message', async () => {
+  test('When recieves request to unknown route, then responses with server error message', async () => {
     const { request } = setup();
     const response = await request.get('/');
     const { statusCode, headers, body } = response;
