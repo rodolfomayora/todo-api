@@ -1,12 +1,6 @@
 const router = require('express').Router();
+const controller = require('./controller');
 
-router.get('/', (request, response, next) => {
-  try {
-    return response.status(200).json({ message: 'NOTES' });
-
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/', controller.getnotes);
 
 module.exports = router;
