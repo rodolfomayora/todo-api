@@ -1,4 +1,11 @@
+const logger = require('../../util/logger');
 const errorCodes = require('../../util/errorCodes');
+
+const errorLogger = (error, request, response, next) => {
+  logger.info('-----------------------------------');
+  logger.error(error.stack);
+  next(error);
+}
 
 const errorResponse = (error, request, response, next) => {
 
@@ -9,4 +16,4 @@ const errorResponse = (error, request, response, next) => {
   return response.status(500).json({ message: 'Server Error' });
 }
 
-module.exports = { errorResponse }
+module.exports = { errorResponse, errorLogger }
