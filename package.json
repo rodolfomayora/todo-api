@@ -1,6 +1,6 @@
 {
   "name": "todo-api",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "./src/bin/www",
   "repository": "https://github.com/rodolfomayora/todo-api.git",
   "author": "Rodolfo Mayora <rodolfomayora96@gmail.com>",
