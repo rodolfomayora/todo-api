@@ -14,9 +14,7 @@ const setup = () => {
   return { requestConfig, request, response, next };
 }
 
-afterEach(() => {
-  jest.resetAllMocks();
-});
+afterEach(() => jest.resetAllMocks());
 
 describe('API middleware: requestLogger', () => {
   test('When request is recieved, then print request info', () => {
@@ -47,5 +45,12 @@ describe('API middleware: requestLogger', () => {
 });
 
 describe('API middleware: unknownRoute', () => {
-  test.todo('When request for an unknown route is recieve, then call to error middleware')
+  test('When request for an unknown route is recieve, then call to error middleware', () => {
+    const { request, response, next } = setup();
+
+    apiMiddeware.unknownRoute(request, response, next);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
+  });
 });
