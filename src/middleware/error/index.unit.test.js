@@ -9,10 +9,32 @@ const setup = (errorCode = '') => {
   const request = httpMocks.createRequest();
   const response = httpMocks.createResponse();
   const next = jest.fn();
-
   return { error, request, response, next };
 }
 
+afterEach(() => jest.resetAllMocks());
+
+describe('Error middleware: errorLogger', () => {
+  test('When recieve an error, then pass the error print error information', () => {
+    const { error, request, response, next } = setup();
+    const loggerSpy = jest.spyOn(logger, 'error');
+
+    errorMiddleware.errorLogger(error, request, response, next);
+    
+    expect(loggerSpy).toHaveBeenCalledTimes(1);
+    expect(loggerSpy).toHaveBeenCalledWith(expect.any(String));
+  });  
+
+  test('When recieve an error, then pass the error to next error middleware', () => {
+    const { error, request, response, next } = setup();
+
+    errorMiddleware.errorLogger(error, request, response, next);
+    const recievedArgument = next.mock.calls[0][0];
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(recievedArgument).toEqual(expect.any(Error));
+  });  
+});
 
 describe('Error middleware: errorResponse', () => {
   test('When recieve UNKNONWN_ROUTE error, then returns 404 status code', () => {
