@@ -13,7 +13,11 @@ const errorResponse = (error, request, response, next) => {
     return response.status(404).json({ message: error.message });
   }
 
+  if (error?.code === errorCodes.UNAVAILABLE_SERVICE) {
+    return response.status(503).json({ message: error.message });
+  }
+
   return response.status(500).json({ message: 'Server Error' });
 }
 
-module.exports = { errorResponse, errorLogger }
+module.exports = { errorResponse, errorLogger };
