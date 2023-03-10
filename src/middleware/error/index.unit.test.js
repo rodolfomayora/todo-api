@@ -37,23 +37,42 @@ describe('Error middleware: errorLogger', () => {
 });
 
 describe('Error middleware: errorResponse', () => {
-  test('When recieve UNKNONWN_ROUTE error, then returns 404 status code', () => {
+  test('When recieve UNKNOWN_ROUTE error, then returns 404 status code', () => {
     const { error, request, response, next } = setup(errorCodes.UNKNOWN_ROUTE);
     errorMiddleware.errorResponse(error, request, response, next);
     expect(response._getStatusCode()).toBe(404);
   });
 
-  test('When recieve UNKNONWN_ROUTE error, then returns JSON format', () => {
+  test('When recieve UNKNOWN_ROUTE error, then returns JSON format', () => {
     const { error, request, response, next } = setup(errorCodes.UNKNOWN_ROUTE);
     errorMiddleware.errorResponse(error, request, response, next);
     expect(response._isJSON()).toBeTruthy();
   });
 
-  test('When recieve UNKNONWN_ROUTE error, then returns a message', () => {
+  test('When recieve UNKNOWN_ROUTE error, then returns a message', () => {
     const { error, request, response, next } = setup(errorCodes.UNKNOWN_ROUTE);
     errorMiddleware.errorResponse(error, request, response, next);
     expect(response._getJSONData()).toEqual({ message: expect.any(String) });
   });
+
+  test('When recieve UNAVAILABLE_SERVICE error, then returns 503 status code', () => {
+    const { error, request, response, next } = setup(errorCodes.UNAVAILABLE_SERVICE);
+    errorMiddleware.errorResponse(error, request, response, next);
+    expect(response._getStatusCode()).toBe(503);
+  });
+
+  test('When recieve UNAVAILABLE_SERVICE error, then returns JSON format', () => {
+    const { error, request, response, next } = setup(errorCodes.UNAVAILABLE_SERVICE);
+    errorMiddleware.errorResponse(error, request, response, next);
+    expect(response._isJSON()).toBeTruthy();
+  });
+
+  test('When recieve UNAVAILABLE_SERVICE error, then returns a message', () => {
+    const { error, request, response, next } = setup(errorCodes.UNAVAILABLE_SERVICE);
+    errorMiddleware.errorResponse(error, request, response, next);
+    expect(response._getJSONData()).toEqual({ message: expect.any(String) });
+  });
+
   test('When recieve unhandled error, then returns 500 status code', () => {
     const { error, request, response, next } = setup();
     errorMiddleware.errorResponse(error, request, response, next);
