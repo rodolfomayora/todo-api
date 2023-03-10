@@ -1,6 +1,6 @@
 const httpMocks = require('node-mocks-http');
-const apiMiddeware = require('.');
 const logger = require('../../util/logger');
+const apiMiddeware = require('.');
 
 const setup = () => {
   const requestConfig = {
@@ -17,13 +17,13 @@ const setup = () => {
 afterEach(() => jest.resetAllMocks());
 
 describe('API middleware: requestLogger', () => {
-  test('When request is recieved, then print request info', () => {
+  test('When request is recieved, then print request information', () => {
     const { requestConfig, request, response, next } = setup();
     const loggerSpy = jest.spyOn(logger, 'info');
 
     apiMiddeware.requestLogger(request, response, next);
     const { mock } = loggerSpy;
-    const { calls } = mock;
+    const { calls } = mock; // params reciebed per call
 
     expect(loggerSpy).toHaveBeenCalledTimes(6);
     expect(calls[0][0]).toBe('-----------------------------------');
@@ -38,9 +38,10 @@ describe('API middleware: requestLogger', () => {
     const { request, response, next } = setup();
 
     apiMiddeware.requestLogger(request, response, next);
+    const recievedArgument = next.mock.calls[0][0];
 
     expect(next).toBeCalledTimes(1);
-    expect(next.mock.calls[0][0]).toBeUndefined();
+    expect(recievedArgument).toBeUndefined();
   });
 });
 
