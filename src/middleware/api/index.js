@@ -1,4 +1,5 @@
 const logger = require('../../util/logger');
+const errorCodes = require('../../util/errorCodes');
 
 const requestLogger = (request, response, next) => {
   const { method, path, body } = request;
@@ -12,4 +13,10 @@ const requestLogger = (request, response, next) => {
   next();
 }
 
-module.exports = { requestLogger }
+const unknownRoute = (request, response, next) => {
+  const error = new Error('The resquested resource was not found on this server');
+  error.code = errorCodes.UNKNOWN_ROUTE;
+  next(error);
+}
+
+module.exports = { requestLogger, unknownRoute }
