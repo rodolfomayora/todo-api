@@ -12,6 +12,7 @@ app.get('/api/v1', (reques, response) => {
 app.use(apiMiddeware.unknownRoute);
 
 // error middlewares
+app.use(errorMiddleware.errorLogger);
 app.use(errorMiddleware.errorResponse);
 
 module.exports = app;
