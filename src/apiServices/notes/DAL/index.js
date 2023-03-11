@@ -38,7 +38,7 @@ const readById = async (noteId) => {
   } catch (error) {
     const isCastError = error instanceof CastError;
     if (isCastError) {
-      const handledError = new Error('Not valid noteId value');
+      const handledError = new Error('Not valid note ID value');
       handledError.code = errorCodes.BAD_REQUEST;
       handledError.stack = error.stack;
       throw handledError;
@@ -49,10 +49,32 @@ const readById = async (noteId) => {
 
 // const updateById = async (noteId, body) => {}
 
-// const deleteById = async (noteId) => {}
+const deleteById = async (noteId) => {
+  try {
+    const document = await Note.findByIdAndDelete(noteId);
+    const isNotFound = !document;
+    if (isNotFound) {
+      const handledError = new Error('Not Found, note ID not match');
+      handledError.code = errorCodes.NOT_FOUND;
+      throw handledError;
+    }
+    return;
+
+  } catch (error) {
+    const isCastError = error instanceof CastError;
+    if (isCastError) {
+      const handledError = new Error('Not valid note ID value');
+      handledError.code = errorCodes.BAD_REQUEST;
+      handledError.stack = error.stack;
+      throw handledError;
+    }
+    throw error;
+  }
+}
 
 module.exports = {
   create,
   readAll,
   readById,
+  deleteById
 }
