@@ -1,6 +1,13 @@
 const httpMocks = require('node-mocks-http');
 const logger = require('../../util/logger');
 const apiMiddeware = require('.');
+const mongoose = require('mongoose');
+
+jest.mock('mongoose', () => ({
+  connection: {
+    readyState: null
+  }
+}));
 
 const setup = () => {
   const requestConfig = {
@@ -14,10 +21,10 @@ const setup = () => {
   return { requestConfig, request, response, next };
 }
 
-afterEach(() => jest.resetAllMocks());
+afterEach(() => jest.restoreAllMocks());
 
 describe('API middleware: requestLogger', () => {
-  test('When request is recieved, then print request information', () => {
+  test('When recieve a request, then print request information', () => {
     const { requestConfig, request, response, next } = setup();
     const loggerSpy = jest.spyOn(logger, 'info');
 
@@ -34,22 +41,45 @@ describe('API middleware: requestLogger', () => {
     expect(calls[5]).toEqual(['DateTime: ', expect.any(String)]);
   })
 
-  test('When request is recieved, then call to next middleware', () => {
+  test('When recieve a request, then call to next middleware', () => {
     const { request, response, next } = setup();
 
     apiMiddeware.requestLogger(request, response, next);
     const recievedArgument = next.mock.calls[0][0];
 
     expect(next).toBeCalledTimes(1);
-    expect(recievedArgument).toBeUndefined();
+    expect(recievedArgument).toBeUndefined(); // evaluate empty props
   });
 });
 
 describe('API middleware: unknownRoute', () => {
-  test('When request for an unknown route is recieve, then call to error middleware', () => {
+  test('When recieve request for an unknown route, then call to error middleware', () => {
     const { request, response, next } = setup();
 
     apiMiddeware.unknownRoute(request, response, next);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
+  });
+});
+
+describe('API middleware: mongooseConnection', () => {
+  test('When recieve a request and database is connected, then calls to next middleware', () => {
+    const { request, response, next } = setup();
+    mongoose.connection.readyState = 1 // connected === 1
+
+    apiMiddeware.mongooseConnection(request, response, next);
+    const recievedARgument =  next.mock.calls[0][0];
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(recievedARgument).toBeUndefined()
+  });
+
+  test('When recieve a request and database still not connected, then calls to error middleware', () => {
+    const { request, response, next } = setup();
+    mongoose.connection.readyState = 0 // disconnected !== 1
+    
+    apiMiddeware.mongooseConnection(request, response, next);
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith(expect.any(Error));
