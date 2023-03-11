@@ -11,6 +11,18 @@ const create = async (request, response, next) => {
   }
 }
 
+const readAll = async (request, response, next) => {
+  const { query } = request;
+  try {
+    const payload = await notesBLL.readAll(query);
+    return response.status(200).json(payload);
+
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
-  create
+  create,
+  readAll
 }
