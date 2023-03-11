@@ -11,13 +11,13 @@ const requestLogger = (request, response, next) => {
   logger.info('Path    : ', path);
   logger.info('Body    : ', body);
   logger.info('DateTime: ', dateTime);
-  next();
+  return next();
 }
 
 const unknownRoute = (request, response, next) => {
   const error = new Error('The resquested resource was not found on this server');
   error.code = errorCodes.UNKNOWN_ROUTE;
-  next(error);
+  return next(error);
 }
 
 const mongooseConnection = (request, response, next) => {

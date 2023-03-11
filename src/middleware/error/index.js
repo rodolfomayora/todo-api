@@ -4,7 +4,7 @@ const errorCodes = require('../../util/errorCodes');
 const errorLogger = (error, request, response, next) => {
   logger.info('-----------------------------------');
   logger.error(error.stack);
-  next(error);
+  return next(error);
 }
 
 const errorResponse = (error, request, response, next) => {
