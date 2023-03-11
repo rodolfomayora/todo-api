@@ -18,8 +18,10 @@ const openConnection = async () => {
 }
 
 const closeConnection = async () => {
+  if (!mongo) return;
   try {
     await mongo.connection.close();
+    mongo = null;
     logger.info('Local mongoDB connection closed');
     await mongoMemoryServer.stopServer();
 
@@ -29,6 +31,7 @@ const closeConnection = async () => {
 }
 
 const dropCollections = async () => {
+  if (!mongo) return;
   const collections = await mongo.connection.db.collections();
   for (const collection of collections) await collection.drop();
   logger.info('Local mongoDB collections droped');
