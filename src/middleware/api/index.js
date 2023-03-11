@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const logger = require('../../util/logger');
 const errorCodes = require('../../util/errorCodes');
 
@@ -19,4 +20,18 @@ const unknownRoute = (request, response, next) => {
   next(error);
 }
 
-module.exports = { requestLogger, unknownRoute }
+const mongooseConnection = (request, response, next) => {
+  const isDatabaseConnected = mongoose.connection.readyState === 1;
+  if (!isDatabaseConnected) {
+    const error = new Error('MongoDB not connected yet');
+    error.code = errorCodes.UNAVAILABLE_SERVICE;
+    return next(error);
+  }
+  return next();
+}
+
+module.exports = {
+  requestLogger,
+  unknownRoute,
+  mongooseConnection
+}
