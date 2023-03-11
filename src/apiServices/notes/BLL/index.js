@@ -1,6 +1,7 @@
 const notesDAL = require('../DAL');
 
 const create = async (body) => {
+  // todo: validate body
   const noteData = { ...body };
   const rawData = await notesDAL.create(noteData);
   const { _id, content, isDone, createdAt } = rawData;
@@ -13,9 +14,10 @@ const create = async (body) => {
 }
 
 const readAll = async (query) => {
-  const rawNotes = await notesDAL.readAll(query);
-  const normalizedNotes = rawNotes.map((rawNote) => {
-    const { _id, content, isDone, createdAt } = rawNote;
+  // todo: validate query
+  const rawDataList = await notesDAL.readAll(query);
+  const normalizedNotes = rawDataList.map((rawData) => {
+    const { _id, content, isDone, createdAt } = rawData;
     return {
       id: _id.toString(),
       content,
@@ -23,10 +25,24 @@ const readAll = async (query) => {
       createdAt
     }
   })
-  return normalizedNotes;
+  return [...normalizedNotes];
+}
+
+const readById = async (params) => {
+  // todo: validate param exists
+  const { noteId } = params;
+  const rawData = await notesDAL.readById(noteId);
+  const { _id, content, isDone, createdAt } = rawData;
+  return {
+    id: _id.toString(),
+    content,
+    isDone,
+    createdAt
+  };
 }
 
 module.exports = {
   create,
-  readAll
+  readAll,
+  readById
 }
