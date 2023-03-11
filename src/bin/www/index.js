@@ -1,7 +1,7 @@
 const httpServer = require('../../config/httpServer');
 const mongoDB = require('../../config/mongoDB');
 
-const init = async () => {
+const main = async () => {
   // 1) server config
   httpServer.startServer();
 
@@ -21,4 +21,4 @@ const init = async () => {
   });
 }
 
-init();
+main();
