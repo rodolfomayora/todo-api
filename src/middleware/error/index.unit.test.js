@@ -29,10 +29,9 @@ describe('Error middleware: errorLogger', () => {
     const { error, request, response, next } = setup();
 
     errorMiddleware.errorLogger(error, request, response, next);
-    const recievedArgument = next.mock.calls[0][0];
 
     expect(next).toHaveBeenCalledTimes(1);
-    expect(recievedArgument).toEqual(expect.any(Error));
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
   });  
 });
 
