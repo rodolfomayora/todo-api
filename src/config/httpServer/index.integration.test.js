@@ -2,8 +2,9 @@ const supertest = require('supertest');
 const mongoMemory = require('../mongoMemory');
 const httpServer = require('.');
 
-const setup = () => {
+const setup = async () => {
   const serverRef = httpServer.startServer();
+  await mongoMemory.openConnection();
   const request = supertest(serverRef);
   return { request };
 }
