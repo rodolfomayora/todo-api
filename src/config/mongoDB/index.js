@@ -16,8 +16,6 @@ const openConnection = async () => {
 
     mongo = await mongoose.connect(uri, config);
     const databaseName = mongo.connection.name;
-    // const { databaseName } = mongoose.connection.db;
-    // logger.info(`DB connected: ${databaseName}`);
     logger.info('MongoDB connection opened');
     logger.info(`DB connected: ${databaseName}`);
 
@@ -28,7 +26,6 @@ const openConnection = async () => {
 
 const closeConnection = async () => {
   try {
-    // await mongoose.connection.close();
     await mongo.connection.close()
     logger.info('MongoDB connection closed');
     
