@@ -6,11 +6,20 @@ const create = async (noteData) => {
   const newNote = { content };
   const response = await Note.create(newNote);
   const rawData = response.toObject();
-  return { ...rawData };
+  return rawData;
 }
 
-// const readAll = async (query) => {}
-// const readAll = async () => {}
+const readAll = async (query) => {
+  const { limit } = query;
+  const defultLimit = 10;
+  const rawNotes = await Note
+    .find()
+    .sort({ createdAt: 'descending' })
+    .limit(limit ?? defultLimit)
+    .lean();
+
+  return rawNotes;
+}
 
 // const readById = async (noteId) => {}
 
@@ -19,5 +28,6 @@ const create = async (noteData) => {
 // const deleteById = async (noteId) => {}
 
 module.exports = {
-  create
+  create,
+  readAll,
 }
