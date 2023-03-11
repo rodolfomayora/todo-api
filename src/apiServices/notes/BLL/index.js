@@ -41,8 +41,16 @@ const readById = async (params) => {
   };
 }
 
+const deleteById = async (params) => {
+  // todo: validate param exists
+  const { noteId } = params;
+  await notesDAL.deleteById(noteId);
+  return { message: 'Resource deleted successfully' };
+}
+
 module.exports = {
   create,
   readAll,
-  readById
+  readById,
+  deleteById
 }
