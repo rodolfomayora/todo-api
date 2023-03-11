@@ -16,6 +16,7 @@ const startServer = async () => {
 }
 
 const stopServer = async () => {
+  if (!mongoServerRef) return;
   await mongoServerRef.stop(); // stop and cleanup db automatically;
   mongoServerRef = null;
   logger.info('Local mongoDB memory server stoped');

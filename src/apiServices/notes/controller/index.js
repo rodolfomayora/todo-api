@@ -1,7 +1,10 @@
-const getnotes = (request, response, next) => {
-  try {
+const notesBLL = require('../BLL');
 
-    return response.status(200).json({ message: 'NOTES' });
+const create = async (request, response, next) => {
+  const { body } = request;
+  try {
+    const payload = await notesBLL.create(body);
+    return response.status(201).json({ ...payload });
 
   } catch (error) {
     return next(error);
@@ -9,5 +12,5 @@ const getnotes = (request, response, next) => {
 }
 
 module.exports = {
-  getnotes
+  create
 }

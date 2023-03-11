@@ -25,8 +25,10 @@ const openConnection = async () => {
 }
 
 const closeConnection = async () => {
+  if (!mongo) return;
   try {
     await mongo.connection.close()
+    mongo = null;
     logger.info('MongoDB connection closed');
     
   } catch (error) {
