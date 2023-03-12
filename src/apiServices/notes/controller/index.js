@@ -33,6 +33,17 @@ const readById = async (request, response, next) => {
   }
 }
 
+const updateById = async (request, response, next) => {
+  const { params, body } = request;
+  try {
+    const payload = await notesBLL.updateById(params, body);
+    return response.status(200).json({ ...payload });
+
+  } catch (error) {
+    return next(error);
+  }
+}
+
 const deleteById = async (request, response, next) => {
   const { params } = request;
   try {
@@ -48,5 +59,6 @@ module.exports = {
   create,
   readAll,
   readById,
+  updateById,
   deleteById
 }
