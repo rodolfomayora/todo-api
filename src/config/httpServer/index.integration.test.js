@@ -46,4 +46,13 @@ describe('API http server', () => {
     expect(headers['content-type']).toContain('application/json');
     expect(body).toEqual({ message: 'MongoDB not connected yet' });
   });
+
+  test('When occurs and unknown internal error, then responses with 500 server error message', async () => {
+    const { request } = await setupWithMongo();
+    const response = await request.get('/api/v1/error');
+    const { statusCode, headers, body } = response;
+    expect(statusCode).toBe(500);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Server Error' });
+  })
 });
