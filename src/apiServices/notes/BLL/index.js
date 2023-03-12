@@ -41,6 +41,20 @@ const readById = async (params) => {
   };
 }
 
+const updateById = async (params, body) => {
+  // todo: validate params and body
+  const { noteId } = params;
+  const noteData =  { ...body };
+  const rawData = await notesDAL.updateById(noteId, noteData);
+  const { _id, content, isDone, createdAt } = rawData;
+  return {
+    id: _id.toString(),
+    content,
+    isDone,
+    createdAt
+  };
+}
+
 const deleteById = async (params) => {
   // todo: validate param exists
   const { noteId } = params;
@@ -52,5 +66,6 @@ module.exports = {
   create,
   readAll,
   readById,
+  updateById,
   deleteById
 }
