@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+const modelName = 'Note';
+
 const noteSchema = new Schema({
   content: {
     type: String,
@@ -17,4 +19,6 @@ const noteSchema = new Schema({
   }
 });
 
-module.exports = model('Note', noteSchema, 'notes');
+const collection = 'notes';
+
+module.exports = model(modelName, noteSchema, collection);

@@ -9,6 +9,14 @@ const errorLogger = (error, request, response, next) => {
 
 const errorResponse = (error, request, response, next) => {
 
+  if (error?.code === errorCodes.BAD_REQUEST) {
+    return response.status(400).json({ message: error.message });
+  }
+
+  if (error?.code === errorCodes.NOT_FOUND) {
+    return response.status(404).json({ message: error.message });
+  }
+
   if (error?.code === errorCodes.UNKNOWN_ROUTE) {
     return response.status(404).json({ message: error.message });
   }
