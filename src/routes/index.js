@@ -1,9 +1,7 @@
 const router = require('express').Router();
 
 router.use('/notes', require('../apiServices/notes/routes'));
-router.get('/', (reques, response) => response
-  .status(200)
-  .json({ message: 'TODO RESTful API' })
-);
+router.use(require('./error')); // GET /error
+router.use(require('./root')); // GET /
 
 module.exports = router;
