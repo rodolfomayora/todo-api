@@ -1,7 +1,15 @@
+const errorCodes = require('../../../util/errorCodes');
 const notesDAL = require('../DAL');
 
 const create = async (body) => {
   // todo: validate body
+  const isContentNotDefined = !body?.content;
+  if (isContentNotDefined) {
+    const error = new Error('Required key(s): content');
+    error.code = errorCodes.BAD_REQUEST;
+    throw error;
+  }
+
   const noteData = { ...body };
   const rawData = await notesDAL.create(noteData);
   const { _id, content, isDone, createdAt } = rawData;
