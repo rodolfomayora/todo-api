@@ -57,7 +57,7 @@ describe('POST /notes', () => {
     expect(isValidDate(body.createdAt)).toBeTruthy();
   });
 
-  test('When missing "conent" field, then should return error message as a JSON with status code 400', async () => {
+  test('When missing "content" field, then should return error message as a JSON with status code 400', async () => {
     const { notesPath } = setup();
 
     const response = await request
@@ -68,8 +68,24 @@ describe('POST /notes', () => {
 
     expect(status).toBe(400);
     expect(headers['content-type']).toContain('application/json');
-    expect(body).toEqual({ message: 'Required key(s): content' });
+    expect(body).toEqual({ message: 'Required key(s): \'content\'.' });
   });
+
+  test('When "content" is too long (length > 100), then should return error message as a JSON with status code 400', async () => {
+    const { notesPath } = setup();
+    const tooLongString = new Array(102).fill('s').join('');
+
+    const response = await request
+      .post(notesPath)
+      .send({ content:  tooLongString });
+
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'content\' should have at most twenty (100) letters.' });
+  });
+
 
   test('When unhandled error occurs, then should return an error message as a JSON with status code 500', async () => {
     jest //this is an stub with jest using spyOn
