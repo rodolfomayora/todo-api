@@ -103,13 +103,10 @@ describe('POST /notes', () => {
 
 describe('GET /notes', () => {
   test('When request all notes, then should return 10 notes at most by default as a JSON with status code 200', async () => {
-    const { populateDB } = setup();
-    const dummyList = new Array(12).fill({
-      content: 'note content'
-    });
-    await populateDB(dummyList);
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
 
-    const response = await request.get(`${basePath}/notes`);
+    const response = await request.get(notesPath);
 
     expect(response.status).toBe(200);
     expect(response.headers['content-type']).toContain('application/json');
@@ -126,19 +123,17 @@ describe('GET /notes', () => {
   });
   
   test('When request only 5 notes, then should return 4 notes as a JSON with status code 200', async () => {
-    const { populateDB, notesPath } = setup();
-    const dummyList = new Array(12).fill({
-      content: 'note content'
-    });    
-    await populateDB(dummyList);
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
 
     const response = await request.get(`${notesPath}?limit=5`);
+    const { status, headers, body } = response;
 
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toContain('application/json');
-    expect(response.body.length).toBeLessThanOrEqual(5);
+    expect(status).toBe(200);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body.length).toBeLessThanOrEqual(5);
 
-    response.body.forEach((document) => {
+    body.forEach((document) => {
       expect(document).toEqual({
         id: expect.any(String),
         content: expect.any(String),
