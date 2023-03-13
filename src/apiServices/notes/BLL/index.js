@@ -33,8 +33,17 @@ const create = async (body) => {
 }
 
 const readAll = async (query) => {
-  // todo: validate query
-  // usar Number.isInteger()
+  if ('limit' in query) {
+    const queryLimit = Number(query.limit);
+    const isInteger = Number.isInteger(queryLimit);
+
+    if (!isInteger) {
+      const error = new Error('Unexpected value(s): \'limit\' should be an integer number.');
+      error.code = errorCodes.BAD_REQUEST;
+      throw error;
+    }
+  }
+
   const rawDataList = await notesDAL.readAll(query);
   const normalizedNotes = rawDataList.map((rawData) => {
     const { _id, content, isDone, createdAt } = rawData;
