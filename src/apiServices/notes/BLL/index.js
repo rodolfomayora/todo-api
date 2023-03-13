@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const errorCodes = require('../../../util/errorCodes');
 const notesDAL = require('../DAL');
 
@@ -9,11 +10,11 @@ const create = async (body) => {
     throw error;
   }
 
-  const noteContent = body.content.trim();
+  const noteContent = body.content.trim().toLowerCase();
 
   const isTooLong = noteContent.length > 100;
   if (isTooLong) {
-    const error = new Error('Unexpected value(s): \'content\' should have at most twenty (100) letters.')
+    const error = new Error('Unexpected value(s): \'content\' should have at most a hundred (100) letters.')
     error.code = errorCodes.BAD_REQUEST;
     throw error;
   }
@@ -58,7 +59,6 @@ const readAll = async (query) => {
 }
 
 const readById = async (params) => {
-  // todo: validate param exists
   const { noteId } = params;
   const rawData = await notesDAL.readById(noteId);
   const { _id, content, isDone, createdAt } = rawData;
@@ -71,7 +71,6 @@ const readById = async (params) => {
 }
 
 const updateById = async (params, body) => {
-  // todo: validate params and body
   const { noteId } = params;
   const noteData =  { ...body };
   const rawData = await notesDAL.updateById(noteId, noteData);
@@ -85,7 +84,6 @@ const updateById = async (params, body) => {
 }
 
 const deleteById = async (params) => {
-  // todo: validate param exists
   const { noteId } = params;
   await notesDAL.deleteById(noteId);
   return { message: 'Resource deleted successfully' };
