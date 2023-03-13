@@ -80,7 +80,7 @@ describe('GET /notes', () => {
     });
   });
 
-  test('When unhandled error occurs, then should retrieves a an error message as a JSON with status code 500', async () => {
+  test('When unhandled error occurs, then should retrieves an error message as a JSON with status code 500', async () => {
     jest
       .spyOn(notesBLL, 'readAll')
       .mockRejectedValue(new Error('random error'));
@@ -91,4 +91,6 @@ describe('GET /notes', () => {
     expect(response.headers['content-type']).toContain('application/json');
     expect(response.body).toEqual({ message: 'Server Error' });
   });
+
+  test.todo('When recieve not valid "limit" param, then should retireves a bad request message as a JSON with status code 400');
 });
