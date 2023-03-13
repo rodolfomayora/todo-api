@@ -143,7 +143,17 @@ describe('GET /notes', () => {
     });
   });
 
-  test.todo('When recieve not valid "limit" param, then should retireves a bad request message as a JSON with status code 400');
+  test('When recieve not valid "limit" param, then should return a bad request message as a JSON with status code 400', async () => {
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
+
+    const response = await request.get(`${notesPath}?limit=no_valid_limit`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'limit\' should be an integer number.' });
+  });
 
   test('When unhandled error occurs, then should return an error message as a JSON with status code 500', async () => {
     jest
