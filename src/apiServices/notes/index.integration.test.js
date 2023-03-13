@@ -1,4 +1,5 @@
 const supertest = require('supertest');
+const isValidDate = require('../../util/isValidDate');
 const mongoMemory = require('../../config/mongoMemory');
 const app = require('../../app');
 const Note = require('./DAL/model/Note');
@@ -8,12 +9,24 @@ const request = supertest(app);
 const basePath = '/api/v1';
 
 const setup = () => { // equivalent to beforeEach, useful to prevent global variables
-  
-  const populateDB = async (data) => { // data can be one Object or an Array of Objects
-    await Note.create(data, { lean: true });
-  }
+  const basePath = '/api/v1';
+  const notesPath = `${basePath}/notes`;
+  const dummyId = '640e97d32bf39abc3af74848';
+  const dummyNote = { content: 'note content' };
+  const dummyNoteUpdate = { content: 'note content updated' };
+  const dummyNoteList = new Array(12).fill(dummyNote);
 
-  return { populateDB }
+  // @data can be one Object or an Array of Objects
+  const populateDB = async (data) => await Note.create(data);
+
+  return {
+    notesPath,
+    dummyId,
+    dummyNote,
+    dummyNoteList,
+    dummyNoteUpdate,
+    populateDB
+  };
 }
 
 beforeAll(async () => {
@@ -29,48 +42,109 @@ afterAll(async () => {
   await mongoMemory.closeConnection();
 });
 
-describe('GET /notes', () => {
-  test('When request all notes, then should retrieves 10 notes at most by default as a JSON with status code 200', async () => {
-    // ARRANGA
-    const { populateDB } = setup();
-    const dummyList = new Array(12).fill({
-      content: 'note content'
+
+describe('POST /notes', () => {
+  test('When creates a new note, then should return new note record as a JSON with status code 201', async () => {
+    const { dummyNote, notesPath } = setup();
+    
+    const response = await request
+      .post(notesPath)
+      .send(dummyNote);
+
+    const { status, headers, body } = response;
+    
+    expect(status).toBe(201);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({
+      id: expect.any(String),
+      content: dummyNote.content,
+      isDone: false,
+      createdAt: expect.any(String)
     });
-    await populateDB(dummyList);
+    expect(isValidDate(body.createdAt)).toBeTruthy();
+  });
+
+  test('When missing "content" field, then should return bad request message as a JSON with status code 400', async () => {
+    const { notesPath } = setup();
+    const emptyRequestbody = {};
+
+    const response = await request
+      .post(notesPath)
+      .send(emptyRequestbody);
+
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Required key(s): \'content\'.' });
+  });
+
+  test('When "content" is too long (length > 100), then should return bad request message as a JSON with status code 400', async () => {
+    const { notesPath } = setup();
+    const tooLongString = new Array(102).fill('s').join('');
+
+    const response = await request
+      .post(notesPath)
+      .send({ content:  tooLongString });
+
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'content\' should have at most a hundred (100) letters.' });
+  });
 
 
-    // ACT
-    const response = await request.get(`${basePath}/notes`);
+  test('When unhandled error occurs, then should return server error message as a JSON with status code 500', async () => {
+    const { notesPath } = setup();
+    jest //this is an stub with jest using spyOn
+      .spyOn(notesBLL, 'create')
+      .mockRejectedValue(new Error('random error'));
+    
+    const response = await request.post(notesPath);
+    const { status, headers, body } = response;
+    
+    expect(status).toBe(500);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Server Error' });
+  });
+});
 
-    //ASSERT
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toContain('application/json');
-    expect(response.body.length).toBeLessThanOrEqual(10);
+describe('GET /notes', () => {
+  test('When request all notes, then should return 10 notes at most by default as a JSON with status code 200', async () => {
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
 
-    response.body.forEach((document) => {
+    const response = await request.get(notesPath);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(200);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body.length).toBeLessThanOrEqual(10);
+
+    body.forEach((document) => {
       expect(document).toEqual({
         id: expect.any(String),
         content: expect.any(String),
         isDone: expect.any(Boolean),
         createdAt: expect.any(String),
-      })
+      });
+      expect(isValidDate(document.createdAt)).toBeTruthy();
     });
   });
   
-  test('When request only 5 notes, then should retrieves 4 notes as a JSON with status code 200', async () => {
-    const { populateDB } = setup();
-    const dummyList = new Array(12).fill({
-      content: 'note content'
-    });    
-    await populateDB(dummyList);
+  test('When request only 5 notes, then should return 4 notes as a JSON with status code 200', async () => {
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
 
-    const response = await request.get(`${basePath}/notes?limit=5`);
+    const response = await request.get(`${notesPath}?limit=5`);
+    const { status, headers, body } = response;
 
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toContain('application/json');
-    expect(response.body.length).toBeLessThanOrEqual(5);
+    expect(status).toBe(200);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body.length).toBeLessThanOrEqual(5);
 
-    response.body.forEach((document) => {
+    body.forEach((document) => {
       expect(document).toEqual({
         id: expect.any(String),
         content: expect.any(String),
@@ -80,17 +154,105 @@ describe('GET /notes', () => {
     });
   });
 
-  test('When unhandled error occurs, then should retrieves an error message as a JSON with status code 500', async () => {
+  test('When recieve not valid "limit" param, then should return bad request message as a JSON with status code 400', async () => {
+    const { populateDB, notesPath, dummyNoteList } = setup();
+    await populateDB(dummyNoteList);
+
+    const response = await request.get(`${notesPath}?limit=no_valid_limit`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'limit\' should be an integer number.' });
+  });
+
+  test('When unhandled error occurs, then should return server error message as a JSON with status code 500', async () => {
+    const { notesPath } = setup();
     jest
       .spyOn(notesBLL, 'readAll')
       .mockRejectedValue(new Error('random error'));
 
-    const response = await request.get(`${basePath}/notes`);
+    const response = await request.get(notesPath);
+    const { status, headers, body } = response;
 
-    expect(response.status).toBe(500);
-    expect(response.headers['content-type']).toContain('application/json');
-    expect(response.body).toEqual({ message: 'Server Error' });
+    expect(status).toBe(500);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Server Error' });
+  });
+});
+
+describe('GET /notes/:noteId', () => {
+  test('When request a note by id, then should return the note as a JSON with status code 200', async () => {
+    const { populateDB, notesPath, dummyNote } = setup();
+    const { _id } = await populateDB(dummyNote);
+    const noteId = _id.toString();
+    const uri = `${notesPath}/${noteId}`;
+
+    const response = await request.get(uri);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(200);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({
+      id: expect.any(String),
+      content: expect.any(String),
+      isDone: expect.any(Boolean),
+      createdAt: expect.any(String),
+    });
+    expect(isValidDate(body.createdAt)).toBeTruthy();
   });
 
-  test.todo('When recieve not valid "limit" param, then should retireves a bad request message as a JSON with status code 400');
+  test('When recieve not valid "noteId", then should return a bad request message as a JSON with status code 400', async () => {
+    const { populateDB, notesPath, dummyNote, } = setup();
+    const uri = `${notesPath}/640e97d32bf39abc3af_not_valid_id`;
+    await populateDB(dummyNote);
+
+    const response = await request.get(uri);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'noteId\' should be a valid ID' });
+  });
+
+  test('When request a note that not exists, then should return a not found resource message as a JSON with status code 404', async () => {
+    const { notesPath, dummyId } = setup();
+    const uri = `${notesPath}/${dummyId}`;
+
+    const response = await request.get(uri);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(404);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Not Found, note ID not match' });
+  });
+
+  test('When unhandled error occurs, then should return server error message as a JSON with status code 500', async () => {
+    const { notesPath, dummyId } = setup();
+    const uri = `${notesPath}/${dummyId}`;
+    jest
+      .spyOn(notesBLL, 'readById')
+      .mockRejectedValue(new Error('random error'));
+
+    const response = await request.get(uri);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(500);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Server Error' });
+  });
+});
+
+describe('PATCH /notes/:noteId', () => {
+  test.todo('When updates a note by id, then should return the new note record as a JSON with status code 200');
+  test.todo('When recieve not valid "noteId", then should return a bad request message as a JSON with status code 400');
+  test.todo('When request a note that not exists, then should return a not found resource message as a JSON with status code 404');
+  test.todo('When unhandled error occurs, then should return server error message as a JSON with status code 500')
+});
+
+describe('DELETE /notes/:noteId', () => {
+  test.todo('When delete a note by id, then should return a successfull message as a JSON with status code 200');
+  test.todo('When recieve not valid "noteId", then should return a bad request message as a JSON with status code 400');
+  test.todo('When request a note that not exists, then should return a not found resource message as a JSON with status code 404');
+  test.todo('When unhandled error occurs, then should return server error message as a JSON with status code 500')
 });
