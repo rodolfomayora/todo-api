@@ -6,7 +6,6 @@ const Note = require('./DAL/model/Note');
 const notesBLL = require('./BLL');
 
 const request = supertest(app);
-const basePath = '/api/v1';
 
 const setup = () => { // equivalent to beforeEach, useful to prevent global variables
   const basePath = '/api/v1';
@@ -17,7 +16,7 @@ const setup = () => { // equivalent to beforeEach, useful to prevent global vari
   const dummyNoteList = new Array(12).fill(dummyNote);
 
   // @data can be one Object or an Array of Objects
-  const populateDB = async (data) => await Note.create(data);
+  const createDocument = async (data) => await Note.create(data);
 
   return {
     notesPath,
@@ -25,7 +24,7 @@ const setup = () => { // equivalent to beforeEach, useful to prevent global vari
     dummyNote,
     dummyNoteList,
     dummyNoteUpdate,
-    populateDB
+    createDocument
   };
 }
 
@@ -112,8 +111,8 @@ describe('POST /notes', () => {
 
 describe('GET /notes', () => {
   test('When request all notes, then should return 10 notes at most by default as a JSON with status code 200', async () => {
-    const { populateDB, notesPath, dummyNoteList } = setup();
-    await populateDB(dummyNoteList);
+    const { createDocument, notesPath, dummyNoteList } = setup();
+    await createDocument(dummyNoteList);
 
     const response = await request.get(notesPath);
     const { status, headers, body } = response;
@@ -134,8 +133,8 @@ describe('GET /notes', () => {
   });
   
   test('When request only 5 notes, then should return 4 notes as a JSON with status code 200', async () => {
-    const { populateDB, notesPath, dummyNoteList } = setup();
-    await populateDB(dummyNoteList);
+    const { createDocument, notesPath, dummyNoteList } = setup();
+    await createDocument(dummyNoteList);
 
     const response = await request.get(`${notesPath}?limit=5`);
     const { status, headers, body } = response;
@@ -155,8 +154,8 @@ describe('GET /notes', () => {
   });
 
   test('When recieve not valid "limit" param, then should return bad request message as a JSON with status code 400', async () => {
-    const { populateDB, notesPath, dummyNoteList } = setup();
-    await populateDB(dummyNoteList);
+    const { createDocument, notesPath, dummyNoteList } = setup();
+    await createDocument(dummyNoteList);
 
     const response = await request.get(`${notesPath}?limit=no_valid_limit`);
     const { status, headers, body } = response;
@@ -183,8 +182,8 @@ describe('GET /notes', () => {
 
 describe('GET /notes/:noteId', () => {
   test('When request a note by id, then should return the note as a JSON with status code 200', async () => {
-    const { populateDB, notesPath, dummyNote } = setup();
-    const { _id } = await populateDB(dummyNote);
+    const { createDocument, notesPath, dummyNote } = setup();
+    const { _id } = await createDocument(dummyNote);
     const noteId = _id.toString();
     const uri = `${notesPath}/${noteId}`;
 
@@ -203,9 +202,9 @@ describe('GET /notes/:noteId', () => {
   });
 
   test('When recieve not valid "noteId", then should return a bad request message as a JSON with status code 400', async () => {
-    const { populateDB, notesPath, dummyNote, } = setup();
+    const { createDocument, notesPath, dummyNote, } = setup();
     const uri = `${notesPath}/640e97d32bf39abc3af_not_valid_id`;
-    await populateDB(dummyNote);
+    await createDocument(dummyNote);
 
     const response = await request.get(uri);
     const { status, headers, body } = response;
