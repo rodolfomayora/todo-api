@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const errorCodes = require('../../../util/errorCodes');
 const notesDAL = require('../DAL');
 
@@ -72,7 +71,27 @@ const readById = async (params) => {
 
 const updateById = async (params, body) => {
   const { noteId } = params;
-  const noteData =  { ...body };
+
+  const isContentNotDefined = !body?.content;
+  if (isContentNotDefined) {
+    const error = new Error('Required key(s): \'content\'.');
+    error.code = errorCodes.BAD_REQUEST;
+    throw error;
+  }
+
+  const noteContent = body.content.trim().toLowerCase();
+
+  const isTooLong = noteContent.length > 100;
+  if (isTooLong) {
+    const error = new Error('Unexpected value(s): \'content\' should have at most a hundred (100) letters.')
+    error.code = errorCodes.BAD_REQUEST;
+    throw error;
+  }
+
+  const noteData = {
+    content: noteContent
+  };
+
   const rawData = await notesDAL.updateById(noteId, noteData);
   const { _id, content, isDone, createdAt } = rawData;
   return {
