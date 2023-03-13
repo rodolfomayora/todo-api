@@ -7,7 +7,8 @@ const { CastError } = mongoose.Error;
 const create = async (noteData) => {
   const { content } = noteData;
   const newNote = { content };
-  const document = await Note.create(newNote, { lean: true });
+  const response = await Note.create(newNote);
+  const document = response.toObject();
   return { ...document };
 }
 
