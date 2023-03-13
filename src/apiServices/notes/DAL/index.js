@@ -38,7 +38,7 @@ const readById = async (noteId) => {
   } catch (error) {
     const isCastError = error instanceof CastError;
     if (isCastError) {
-      const handledError = new Error('Not valid note ID value');
+      const handledError = new Error('Unexpected value(s): \'noteId\' should be a valid ID');
       handledError.code = errorCodes.BAD_REQUEST;
       handledError.stack = error.stack;
       throw handledError;
@@ -66,7 +66,7 @@ const updateById = async (noteId, noteData) => {
   } catch (error) {
     const isCastError = error instanceof CastError;
     if (isCastError) {
-      const handledError = new Error('Not valid note ID value');
+      const handledError = new Error('Unexpected value(s): \'noteId\' should be a valid ID');
       handledError.code = errorCodes.BAD_REQUEST;
       handledError.stack = error.stack;
       throw handledError;
@@ -89,7 +89,7 @@ const deleteById = async (noteId) => {
   } catch (error) {
     const isCastError = error instanceof CastError;
     if (isCastError) {
-      const handledError = new Error('Not valid note ID value');
+      const handledError = new Error('Unexpected value(s): \'noteId\' should be a valid ID');
       handledError.code = errorCodes.BAD_REQUEST;
       handledError.stack = error.stack;
       throw handledError;
