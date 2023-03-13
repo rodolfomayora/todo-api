@@ -335,8 +335,52 @@ describe('PATCH /notes/:noteId', () => {
 });
 
 describe('DELETE /notes/:noteId', () => {
-  test.todo('When delete a note by id, then should return a successfull message as a JSON with status code 200');
-  test.todo('When recieve not valid "noteId", then should return a bad request message as a JSON with status code 400');
-  test.todo('When request a note that not exists, then should return a not found resource message as a JSON with status code 404');
-  test.todo('When unhandled error occurs, then should return server error message as a JSON with status code 500');
+  test('When delete a note by id, then should return a successfull message as a JSON with status code 200', async () => {
+    const { createDocument, basePath, dummyNote } = setup();
+    const { _id } = await createDocument(dummyNote);
+    const noteId = _id.toString();
+
+    const response = await request.delete(`${basePath}/notes/${noteId}`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(200);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Resource deleted successfully' });
+  });
+
+  test('When try to delete with not valid "noteId", then should return a bad request message as a JSON with status code 400', async () => {
+    const { basePath } = setup();
+
+    const response = await request.delete(`${basePath}/notes/640e97d32bf39abc3af_not_valid_id`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(400);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Unexpected value(s): \'noteId\' should be a valid ID' });
+  });
+
+  test('When try to delete a note that not exists, then should return a not found resource message as a JSON with status code 404', async () => {
+    const { basePath } = setup();
+
+    const response = await request.delete(`${basePath}/notes/640e97d32bf39abc3af74848`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(404);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Not Found, note ID not match' });
+  });
+
+  test('When unhandled error occurs, then should return server error message as a JSON with status code 500', async () => {
+    const { basePath } = setup();
+    jest
+      .spyOn(notesBLL, 'deleteById')
+      .mockRejectedValue(new Error('random error'));
+
+    const response = await request.delete(`${basePath}/notes/640e97d32bf39abc3af74848`);
+    const { status, headers, body } = response;
+
+    expect(status).toBe(500);
+    expect(headers['content-type']).toContain('application/json');
+    expect(body).toEqual({ message: 'Server Error' });
+  });
 });
