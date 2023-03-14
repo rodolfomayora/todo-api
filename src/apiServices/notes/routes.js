@@ -309,6 +309,73 @@ router.get('/:noteId', notesController.readById);
   }
  */
 router.patch('/:noteId', notesController.updateById);
+
+/** DELETE /notes/:noteId
+  @swagger
+  {
+    "/notes/{noteId}": {
+      "delete": {
+        "summary": "Deletes a note by ID",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of the required note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Resource deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not valid note ID"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Note not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found, note ID not match"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ */
 router.delete('/:noteId', notesController.deleteById);
 
 module.exports = router;
