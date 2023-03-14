@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + './../public'));
 app.use(apiMiddeware.requestLogger);
 app.use(apiMiddeware.mongooseConnection);
 app.use('/api/v1', routers);
