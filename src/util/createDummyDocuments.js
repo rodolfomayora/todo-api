@@ -20,7 +20,7 @@ const createDummyDocuments = async () => {
   }
 
   await saveNotes(createNoteList(15));
-  return logger.info('Database populated with dummy documents');
+  return logger.info('Local DB populated with dummy documents');
 }
 
 module.exports = createDummyDocuments;
