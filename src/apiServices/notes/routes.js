@@ -165,6 +165,67 @@ router.post('/', notesController.create);
   }
  */
 router.get('/', notesController.readAll);
+
+/** GET /notes/:noteId
+  @swagger
+  {
+    "/notes/{noteId}": {
+      "get": {
+        "summary": "Find a note by ID",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of the required note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not valid note ID"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                 "example": {
+                  "message": "Not Found, note ID not match"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ */
 router.get('/:noteId', notesController.readById);
 router.patch('/:noteId', notesController.updateById);
 router.delete('/:noteId', notesController.deleteById);
