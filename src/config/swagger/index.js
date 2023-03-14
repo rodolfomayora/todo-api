@@ -5,7 +5,7 @@ const env = require('../env');
 
 const port = env.PORT;
 const hostname = env.HOSTNAME
-const host = `${hostname}:${port}`;
+const host = env.IS_PRODUCTION ? hostname : `${hostname}:${port}`;
 const basePath = '/api/v1';
 
 const swaggerConfig = {
