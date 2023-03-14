@@ -1,16 +1,20 @@
 const httpServer = require('../../config/httpServer');
-const mongoDB = require('../../config/mongoDB');
+const database = require('../../config/database');
+const env = require('../../config/env');
+const createDummyDocuments = require('../../util/createDummyDocuments');
 
 const main = async () => {
   const endOperations = async () => {
-    await mongoDB.closeConnection();
+    await database.closeConnection();
     httpServer.stopServer();
     process.exit(0);
   }
 
   httpServer.startServer();
 
-  await mongoDB.openConnection();
+  await database.openConnection();
+
+  if (env.IS_DEVELOPMENT) await createDummyDocuments();
 
   process.on('SIGUSR2', endOperations); // for development (nodemon restart)
 

@@ -23,7 +23,7 @@ const unknownRoute = (request, response, next) => {
 const mongooseConnection = (request, response, next) => {
   const isDatabaseConnected = mongoose.connection.readyState === 1;
   if (!isDatabaseConnected) {
-    const error = new Error('MongoDB not connected yet');
+    const error = new Error('Database not connected yet');
     error.code = errorCodes.UNAVAILABLE_SERVICE;
     return next(error);
   }

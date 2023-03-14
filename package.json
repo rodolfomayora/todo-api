@@ -1,6 +1,6 @@
 {
   "name": "todo-api",
-  "version": "0.43.4",
+  "version": "0.91.5",
   "main": "./src/bin/www",
   "repository": "https://github.com/rodolfomayora/todo-api.git",
   "author": "Rodolfo Mayora <rodolfomayora96@gmail.com>",
@@ -21,6 +21,7 @@
     "swagger-ui-express": "^4.6.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@types/jest": "^29.4.0",
     "@types/supertest": "^2.0.12",
     "jest": "^29.5.0",
