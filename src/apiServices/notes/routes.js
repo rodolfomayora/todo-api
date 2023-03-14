@@ -1,7 +1,51 @@
 const router = require('express').Router();
 const notesController = require('./controller');
 
-/**
+/** COMPONENTS
+  @swagger
+  {
+    "components": {
+      "schemas": {
+        "Note": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "ID of the note",
+              "example": "6401cabe528cbbb93899e71c"
+            },
+            "content": {
+              "type": "string",
+              "description": "Content of the note",
+              "example": "Learn Swagger Documentation"
+            },
+            "isDone": {
+              "type": "boolean",
+              "description": "Status of the note",
+              "example": true
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Creation date of the note",
+              "example": "2023-03-12T22:20:24.520Z"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+            }
+          }
+        }
+      }
+    }
+  }
+ */
+
+/** TAGS
   @swagger
   {
     "tags": {
@@ -11,15 +55,14 @@ const notesController = require('./controller');
   }
  */
 
-
 router.post('/', notesController.create);
 
-/**
+/** GET /notes
   @swagger
   {
     "/notes": {
       "get": {
-        "summary": "Returns all notes",
+        "summary": "Return all notes",
         "tags": ["Notes"],
         "parameters": [
           {
@@ -41,30 +84,7 @@ router.post('/', notesController.create);
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "ID of the note",
-                        "example": "6401cabe528cbbb93899e71c"
-                      },
-                      "content": {
-                        "type": "string",
-                        "description": "Content of the note",
-                        "example": "Learn Swagger Documentation"
-                      },
-                      "isDone": {
-                        "type": "boolean",
-                        "description": "Status of the note",
-                        "example": true
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Creation date of the note",
-                        "example": "2023-03-12T22:20:24.520Z"
-                      }
-                    }
+                    "$ref": "#/components/schemas/Note"
                   }
                 }
               }
@@ -75,13 +95,10 @@ router.post('/', notesController.create);
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Not valid value for parameter 'limit'. Please provide an Integer number value"
-                    }
-                  }
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Unexpected value(s): 'limit' should be an integer number"
                 }
               }
             }
@@ -92,8 +109,6 @@ router.post('/', notesController.create);
   }
  */
 router.get('/', notesController.readAll);
-
-
 router.get('/:noteId', notesController.readById);
 router.patch('/:noteId', notesController.updateById);
 router.delete('/:noteId', notesController.deleteById);
