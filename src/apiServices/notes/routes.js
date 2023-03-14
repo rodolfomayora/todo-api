@@ -227,6 +227,87 @@ router.get('/', notesController.readAll);
   }
  */
 router.get('/:noteId', notesController.readById);
+
+/** PATCH /notes/:noteid
+  @swagger
+  {
+    "/notes/{noteId}": {
+      "patch": {
+        "summary": "Update an existing note by ID",
+        "tags": ["Notes"],
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "description": "ID of the required note",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Note to update on the system",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "required": true,
+                    "maxLength": 100,
+                    "description": "Text content of the note",
+                    "example": "New content infor"
+                  },
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not valid note ID"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Note not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                 "example": {
+                  "message": "Not Found, note ID not match"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ */
 router.patch('/:noteId', notesController.updateById);
 router.delete('/:noteId', notesController.deleteById);
 
