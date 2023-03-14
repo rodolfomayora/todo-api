@@ -55,6 +55,62 @@ const notesController = require('./controller');
   }
  */
 
+/** POST /notes
+  @swagger
+  {
+    "/notes": {
+      "post": {
+        "summary": "Create note",
+        "tags": ["Notes"],
+        "requestBody": {
+          "description": "Note to add to the system",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "required": true,
+                    "maxLength": 100,
+                    "description": "Text content of the note",
+                    "example": "Learn Open API Specification"
+                  },
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Required key(s): 'content'"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ */
 router.post('/', notesController.create);
 
 /** GET /notes
