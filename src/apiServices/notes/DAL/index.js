@@ -55,22 +55,10 @@ const updateById = async (noteId, noteData) => {
       .findByIdAndUpdate(noteId, updatedData, config)
       .lean();
 
-    const documentNotFound = !document;
-    if (documentNotFound) {
-      const handledError = new Error('Not Found, note ID not match');
-      handledError.code = errorCodes.NOT_FOUND;
-      throw handledError;
-    }
     return { ...document };
 
   } catch (error) {
     const isCastError = error instanceof CastError;
-    if (isCastError) {
-      const handledError = new Error('Unexpected value(s): \'noteId\' should be a valid ID');
-      handledError.code = errorCodes.BAD_REQUEST;
-      handledError.stack = error.stack;
-      throw handledError;
-    }
     throw error;
   }
 }
