@@ -42,7 +42,7 @@ afterAll(async () => {
 
 
 describe('POST /notes', () => {
-  test('When creates a new note, then should return new note record as a JSON with status code 201', async () => {
+  test('When XDDD creates a new note, then should return new note record as a JSON with status code 201', async () => {
     const { basePath, dummyNote } = setup();
     
     const response = await request
