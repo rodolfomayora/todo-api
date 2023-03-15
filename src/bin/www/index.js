@@ -1,7 +1,6 @@
 const httpServer = require('../../config/httpServer');
 const database = require('../../config/database');
 const env = require('../../config/env');
-const createDummyDocuments = require('../../util/createDummyDocuments');
 
 const main = async () => {
   const endOperations = async () => {
@@ -14,7 +13,7 @@ const main = async () => {
 
   await database.openConnection();
 
-  if (env.IS_DEVELOPMENT) await createDummyDocuments();
+  if (env.IS_DEVELOPMENT) require('../../util/createDummyDocuments')();
 
   process.on('SIGUSR2', endOperations); // for development (nodemon restart)
 
