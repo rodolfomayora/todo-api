@@ -26,7 +26,7 @@ jobs:
         run: curl -L https://fly.io/install.sh | sh
 
       - name: Login to flyctl
-        run: flyctl auth login --access-token "${FLY_API_TOKEN}"
+        run: /home/runner/.fly/bin/flyctl auth login --access-token "${FLY_API_TOKEN}"
 
       - name: Deploy app
-        run: flyctl deploy --app "${FLY_APP_NAME}"
+        run: /home/runner/.fly/bin/flyctl deploy --app "${FLY_APP_NAME}"
