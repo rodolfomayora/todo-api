@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [closed]
     branches: ["master"]
+    
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  FLY_APP_NAME: todo-api
 
 jobs:
   deploy:
@@ -22,11 +26,7 @@ jobs:
         run: curl -L https://fly.io/install.sh | sh
 
       - name: Login to flyctl
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: flyctl auth login --token "${FLY_API_TOKEN}"
 
       - name: Deploy app
-        env:
-          FLY_APP_NAME: todo-app
         run: flyctl deploy --app "${FLY_APP_NAME}"
