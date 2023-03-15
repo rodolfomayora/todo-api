@@ -1,0 +1,32 @@
+name: Fly.io Deploy
+
+on:
+  pull_request:
+    types: [closed]
+    branches: ["master"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+        
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install flyctl
+        run: curl https://get.fly.io/flyctl.sh | sh
+
+      - name: Login to flyctl
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: flyctl auth login --token "${FLY_API_TOKEN}"
+
+      - name: Deploy app
+        env:
+          FLY_APP_NAME: todo-app
+        run: flyctl deploy --app "${FLY_APP_NAME}"
