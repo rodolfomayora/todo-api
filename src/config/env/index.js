@@ -1,6 +1,6 @@
 const ports = {
   default    : 8080,
-  production : 3001,
+  production : 8080,
   development: 3002,
   testing    : 3003
 }
